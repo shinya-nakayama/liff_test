@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="ja">
   <head>
+   <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
 　　  <style>
       html {
         font-family: "Yu Gothic", YuGothic, Verdana, 'Hiragino Kaku Gothic ProN','Hiragino Kaku Gothic Pro', 'ヒラギノ角ゴ Pro W3', 'メイリオ', Meiryo, sans-serif;
@@ -73,5 +74,54 @@
   <body>
     <h1>LIFFテストページ</h1>
     <p>LIFFの作成を色々と試すためのページです。</p>
+    <script>
+    const liffId = "2000404474-L1kWldgw"
+    const Name = document.getElementById('profile_name');
+    const Img = document.getElementById("profile_img");
+ 
+    liff.init({liffId}).then(() => {
+      if (liff.isLoggedIn()) {
+        liff.getProfile()
+          .then(profile => {
+            const name = profile.displayName;
+            const pic = profile.pictureUrl;
+            Name.innerHTML = name;
+            Img.src = pic;
+          })
+          .catch((err) => {
+            console.log('error', err);
+          });
+      }
+      else{
+        liff.login();
+      }
+    })
+     
+    function closeWindow() {
+      if (!liff.isInClient()) {
+          sendAlertIfNotInClient();
+      } else {
+          liff.closeWindow();
+      }
+    }
+     
+    function shareFriends() {
+      if (liff.isApiAvailable('shareTargetPicker')){
+        liff.shareTargetPicker(
+          [{
+            type: 'text',
+            text: 'https://liff.line.me/2000404474-L1kWldgw'
+          }]
+        ).then(function() {
+        }).catch(function(error) {
+          window.alert('シェア機能でエラーが起こりました：'+ error);
+        });
+      };
+    }
+     
+    document.querySelector("#shareFriends").addEventListener("click", shareFriends)
+    document.getElementById('closeWindowButton').addEventListener('click', closeWindow)
+     
+  </script>
   </body>
 </html>
